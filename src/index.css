@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0a0a0b;
+  --color-panel: #131316;
+  --color-line: #26262b;
+  --color-accent: #d4ff3a;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  @apply bg-ink text-zinc-300 antialiased;
+}
+
+h1,
+h2,
+h3 {
+  @apply font-display text-white;
+  text-wrap: balance;
+}
+
+section[id] {
+  scroll-margin-top: 5rem;
+}
