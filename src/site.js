@@ -3,7 +3,7 @@ export const site = {
   name: 'Black Sheep Builds',
   phoneDisplay: '(502) 219-6879',
   phoneHref: 'tel:+15022196879',
-  email: 'hello@blacksheepbuilds.com',
+  email: 'hello@blacksheepbuilds.org',
   area: 'Serving local service businesses nationwide',
 }
 
