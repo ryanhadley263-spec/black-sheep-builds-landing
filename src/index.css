@@ -1,24 +1,174 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0a0a0b;
-  --color-panel: #131316;
-  --color-line: #26262b;
-  --color-accent: #d4ff3a;
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  /* Charcoal (dark surfaces) */
+  --color-char: #15171a;
+  --color-char-2: #1c1f23;
+  --color-char-3: #252a30;
+  --color-line: #2d3238;
+  --color-line-2: #3b4148;
+
+  /* Paper (light surfaces) */
+  --color-paper: #f5f2ea;
+  --color-paper-2: #ece7db;
+  --color-paper-line: #dbd4c5;
+
+  /* Text */
+  --color-ink: #15171a;   /* headings on paper */
+  --color-slate: #4d4a44; /* body on paper */
+  --color-fog: #bab6ad;   /* body on charcoal */
+  --color-smoke: #8a877f; /* secondary on charcoal */
+
+  /* Accents */
+  --color-amber: #e8a33d;
+  --color-amber-hi: #f2b456;
+  --color-ochre: #9a5c12; /* amber that reads on paper */
+  --color-rust: #c2551d;
+  --color-steel: #3e5c76;
+  --color-steel-hi: #93aabf;
+
+  --font-sans: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --animate-marquee: marquee 48s linear infinite;
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }
 
-body {
-  @apply bg-ink text-zinc-300 antialiased;
+@layer base {
+  body {
+    @apply bg-char text-fog antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--color-amber);
+    color: var(--color-char);
+  }
+
+  section[id] {
+    scroll-margin-top: 4rem;
+  }
 }
 
-h1,
-h2,
-h3 {
-  @apply font-display text-white;
-  text-wrap: balance;
+/* Wide, heavy headline type (Archivo's width axis). */
+@utility font-display {
+  font-family: var(--font-sans);
+  font-stretch: 116%;
+  font-weight: 800;
+  letter-spacing: -0.022em;
 }
 
-section[id] {
-  scroll-margin-top: 5rem;
+/* Small mono labels used like stamps on a work order. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Hazard-stripe band. */
+@utility stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-amber) 0 10px,
+    var(--color-char) 10px 20px
+  );
+}
+
+/* Faint blueprint grid. */
+@utility blueprint {
+  background-image:
+    linear-gradient(to right, rgb(245 242 234 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(245 242 234 / 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Film grain over the whole page. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Scroll reveal (see Reveal in ui.jsx). */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Hero entrance, staggered with inline animation-delay. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* New-lead text notification. */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.toast-in {
+  animation: toast-in 0.55s cubic-bezier(0.2, 0.8, 0.25, 1.15) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .toast-in {
+    animation: none;
+  }
+}
+
+/* Horizontal carousels scroll without a visible scrollbar. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }

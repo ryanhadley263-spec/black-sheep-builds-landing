@@ -1,42 +1,88 @@
-import { CTA_LABEL } from '../site.js'
+import { useEffect, useRef, useState } from 'react'
+import { ArrowIcon } from './icons.jsx'
 
-export function CtaButton({ className = '', children = CTA_LABEL }) {
+const buttonBase =
+  'group inline-flex items-center justify-center gap-2.5 rounded-lg font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber'
+
+const buttonVariants = {
+  primary:
+    'bg-amber text-char shadow-[inset_0_1px_0_rgb(255_255_255/0.35),0_10px_30px_-12px_rgb(232_163_61/0.6)] hover:bg-amber-hi',
+  secondary: 'border border-line-2 text-paper hover:border-smoke hover:bg-char-2',
+}
+
+export function ButtonLink({ href, variant = 'primary', arrow = variant === 'primary', className = '', children }) {
   return (
-    <a
-      href="#preview"
-      className={`inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-base font-semibold text-ink transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${className}`}
-    >
+    <a href={href} className={`${buttonBase} ${buttonVariants[variant]} h-13 px-6 text-[15px] ${className}`}>
       {children}
-      <span aria-hidden="true">→</span>
+      {arrow && <ArrowIcon className="size-[18px] transition-transform group-hover:translate-x-0.5" />}
     </a>
   )
 }
 
-export function Section({ id, eyebrow, title, intro, children }) {
+export function SectionLabel({ index, paper = false, children }) {
   return (
-    <section id={id} className="border-t border-line px-5 py-20 sm:py-28">
+    <p className={`label-mono flex items-center gap-3 ${paper ? 'text-slate' : 'text-smoke'}`}>
+      <span className={paper ? 'text-ochre' : 'text-amber'}>{index}</span>
+      <span aria-hidden="true" className="h-px w-8 bg-current opacity-40" />
+      <span>{children}</span>
+    </p>
+  )
+}
+
+export function Section({ id, tone = 'dark', index, eyebrow, title, intro, children, className = '' }) {
+  const paper = tone === 'paper'
+  return (
+    <section id={id} className={`px-5 py-24 sm:py-32 ${paper ? 'bg-paper text-slate' : ''} ${className}`}>
       <div className="mx-auto max-w-6xl">
-        <div className="max-w-2xl">
-          {eyebrow && (
-            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent">{eyebrow}</p>
-          )}
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
-          {intro && <p className="mt-4 text-lg text-zinc-400">{intro}</p>}
-        </div>
-        <div className="mt-12">{children}</div>
+        <Reveal className="max-w-3xl">
+          <SectionLabel index={index} paper={paper}>
+            {eyebrow}
+          </SectionLabel>
+          <h2
+            className={`mt-5 font-display text-[2.15rem] leading-[1.02] sm:text-5xl ${paper ? 'text-ink' : 'text-paper'}`}
+          >
+            {title}
+          </h2>
+          {intro && <p className="mt-5 max-w-2xl text-lg leading-relaxed">{intro}</p>}
+        </Reveal>
+        <div className="mt-14 sm:mt-16">{children}</div>
       </div>
     </section>
   )
 }
 
-export function Check({ className = '' }) {
+// Fades content up the first time it scrolls into view.
+export function Reveal({ as: Tag = 'div', delay = 0, className = '', children, ...rest }) {
+  const ref = useRef(null)
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !('IntersectionObserver' in window)) {
+      setShown(true)
+      return
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
   return (
-    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className={`size-5 shrink-0 text-accent ${className}`}>
-      <path
-        fillRule="evenodd"
-        d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4l3.8 3.8 6.8-6.8a1 1 0 0 1 1.4 0z"
-        clipRule="evenodd"
-      />
-    </svg>
+    <Tag
+      ref={ref}
+      className={`reveal ${shown ? 'is-in' : ''} ${className}`}
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+      {...rest}
+    >
+      {children}
+    </Tag>
   )
 }

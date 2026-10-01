@@ -1,34 +1,40 @@
 import { site } from '../site.js'
+import { Logo } from './Logo.jsx'
+import { PhoneIcon } from './icons.jsx'
 
 const links = [
   ['Services', '#services'],
+  ['Samples', '#samples'],
   ['How it works', '#how-it-works'],
   ['Pricing', '#pricing'],
+  ['FAQ', '#faq'],
 ]
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-ink/85 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        <a href="#top" className="font-display text-lg font-bold tracking-tight text-white">
-          Black Sheep <span className="text-accent">Builds</span>
-        </a>
-        <nav className="hidden items-center gap-8 text-sm text-zinc-400 md:flex">
+    <header className="sticky top-0 z-50 border-b border-line/70 bg-char/95 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-5">
+        <Logo />
+        <nav aria-label="Main" className="hidden items-center gap-7 whitespace-nowrap text-sm text-fog lg:flex">
           {links.map(([label, href]) => (
-            <a key={href} href={href} className="transition hover:text-white">
+            <a key={href} href={href} className="transition-colors hover:text-paper">
               {label}
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-4">
-          <a href={site.phoneHref} className="hidden text-sm font-medium text-zinc-300 hover:text-white sm:block">
+        <div className="flex items-center gap-5">
+          <a
+            href={site.phoneHref}
+            className="hidden items-center gap-2 font-mono text-[13px] text-fog transition-colors hover:text-paper lg:flex"
+          >
+            <PhoneIcon className="size-4 text-amber" />
             {site.phoneDisplay}
           </a>
           <a
             href="#preview"
-            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-ink transition hover:brightness-110"
+            className="inline-flex h-10 items-center whitespace-nowrap rounded-lg bg-amber px-3.5 text-[13px] font-semibold sm:px-4 sm:text-sm text-char transition hover:bg-amber-hi focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
           >
-            Free Preview
+            Free preview
           </a>
         </div>
       </div>
